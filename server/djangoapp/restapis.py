@@ -11,7 +11,6 @@ sentiment_analyzer_url = os.getenv(
 )
 
 
-
 def get_request(endpoint, **kwargs):
     params = ""
     if kwargs:
