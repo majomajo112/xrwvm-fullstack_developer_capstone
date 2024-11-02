@@ -21,11 +21,15 @@ def login_user(request):
     if user:
         login(request, user)
         response_data["status"] = "Authenticated"
+    else:
+        response_data["status"] = "Authentication failed"
     return JsonResponse(response_data)
+
 
 def logout_request(request):
     logout(request)
     return JsonResponse({"userName": ""})
+
 
 @csrf_exempt
 def registration(request):
@@ -49,6 +53,7 @@ def registration(request):
         return JsonResponse({"userName": username, "status": "Authenticated"})
     return JsonResponse({"userName": username, "error": "Already Registered"})
 
+
 def get_cars(request):
     if not CarMake.objects.exists():
         initiate()
@@ -56,15 +61,18 @@ def get_cars(request):
     cars = [{"CarModel": cm.name, "CarMake": cm.car_make.name} for cm in car_models]
     return JsonResponse({"CarModels": cars})
 
+
 def get_dealerships(request, state="All"):
     endpoint = "/fetchDealers" if state == "All" else f"/fetchDealers/{state}"
     dealerships = get_request(endpoint)
     return JsonResponse({"status": 200, "dealers": dealerships})
 
+
 def get_dealer_details(request, dealer_id):
     endpoint = f"/fetchDealer/{dealer_id}"
     dealership = get_request(endpoint)
     return JsonResponse({"status": 200, "dealer": dealership})
+
 
 def get_dealer_reviews(request, dealer_id):
     endpoint = f"/fetchReviews/dealer/{dealer_id}"
@@ -74,6 +82,7 @@ def get_dealer_reviews(request, dealer_id):
         review['sentiment'] = sentiment_response['sentiment']
     return JsonResponse({"status": 200, "reviews": reviews})
 
+
 @csrf_exempt
 def add_review(request):
     if request.user.is_authenticated:
@@ -81,6 +90,7 @@ def add_review(request):
         try:
             post_review(data)
             return JsonResponse({"status": 200})
-        except:
+        except Exception as e:
+            logger.error(f"Error posting review: {e}")
             return JsonResponse({"status": 401, "message": "Error in posting review"})
     return JsonResponse({"status": 403, "message": "Unauthorized"})
