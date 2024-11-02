@@ -10,6 +10,7 @@ from .populate import initiate
 
 logger = logging.getLogger(__name__)
 
+
 @csrf_exempt
 def login_user(request):
     data = json.loads(request.body)
@@ -60,8 +61,12 @@ def get_cars(request):
     if not CarMake.objects.exists():
         initiate()
     car_models = CarModel.objects.select_related('car_make')
-    cars = [{"CarModel": cm.name, "CarMake": cm.car_make.name} for cm in car_models]
+    cars = [
+        {"CarModel": cm.name, "CarMake": cm.car_make.name} 
+        for cm in car_models
+    ]
     return JsonResponse({"CarModels": cars})
+
 
 
 def get_dealerships(request, state="All"):
