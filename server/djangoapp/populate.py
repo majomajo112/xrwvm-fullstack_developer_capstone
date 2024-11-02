@@ -1,10 +1,7 @@
-import os
-import json
 import django
-
-django.setup()
 from .models import CarMake, CarModel
 
+django.setup()
 
 def initiate():
     car_make_data = [
@@ -18,7 +15,10 @@ def initiate():
     car_make_instances = []
     for data in car_make_data:
         car_make_instances.append(
-            CarMake.objects.create(name=data['name'], description=data['description'])
+            CarMake.objects.create(
+                name=data['name'],
+                description=data['description']
+            )
         )
 
     # Create CarModel instances with the corresponding CarMake instances
