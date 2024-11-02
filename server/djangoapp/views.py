@@ -1,6 +1,5 @@
 import json
 import logging
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
@@ -18,11 +17,13 @@ def login_user(request):
     password = data['password']
     user = authenticate(username=username, password=password)
     response_data = {"userName": username}
+    
     if user:
         login(request, user)
         response_data["status"] = "Authenticated"
     else:
         response_data["status"] = "Authentication failed"
+    
     return JsonResponse(response_data)
 
 
@@ -51,6 +52,7 @@ def registration(request):
         )
         login(request, user)
         return JsonResponse({"userName": username, "status": "Authenticated"})
+    
     return JsonResponse({"userName": username, "error": "Already Registered"})
 
 
@@ -65,13 +67,19 @@ def get_cars(request):
 def get_dealerships(request, state="All"):
     endpoint = "/fetchDealers" if state == "All" else f"/fetchDealers/{state}"
     dealerships = get_request(endpoint)
-    return JsonResponse({"status": 200, "dealers": dealerships})
+    return JsonResponse({
+        "status": 200,
+        "dealers": dealerships
+    })
 
 
 def get_dealer_details(request, dealer_id):
     endpoint = f"/fetchDealer/{dealer_id}"
     dealership = get_request(endpoint)
-    return JsonResponse({"status": 200, "dealer": dealership})
+    return JsonResponse({
+        "status": 200,
+        "dealer": dealership
+    })
 
 
 def get_dealer_reviews(request, dealer_id):
@@ -80,7 +88,11 @@ def get_dealer_reviews(request, dealer_id):
     for review in reviews:
         sentiment_response = analyze_review_sentiments(review['review'])
         review['sentiment'] = sentiment_response['sentiment']
-    return JsonResponse({"status": 200, "reviews": reviews})
+    
+    return JsonResponse({
+        "status": 200,
+        "reviews": reviews
+    })
 
 
 @csrf_exempt
@@ -92,5 +104,11 @@ def add_review(request):
             return JsonResponse({"status": 200})
         except Exception as e:
             logger.error(f"Error posting review: {e}")
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
-    return JsonResponse({"status": 403, "message": "Unauthorized"})
+            return JsonResponse({
+                "status": 401,
+                "message": "Error in posting review"
+            })
+    return JsonResponse({
+        "status": 403,
+        "message": "Unauthorized"
+    })
