@@ -30,12 +30,12 @@ try {
 }
 
 // Routes
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
   res.send("Welcome to the Mongoose API");
 });
 
 // Fetch all reviews
-app.get('/fetchReviews', async (req, res) => {
+app.get('/fetchReviews', async (_req, res) => {
   try {
     const documents = await Reviews.find();
     res.json(documents);
@@ -55,7 +55,7 @@ app.get('/fetchReviews/dealer/:id', async (req, res) => {
 });
 
 // Fetch all dealerships
-app.get('/fetchDealers', async (req, res) => {
+app.get('/fetchDealers', async (_req, res) => {
   try {
     res.json(dealerships_data);
   } catch (error) {
