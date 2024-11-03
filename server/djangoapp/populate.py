@@ -3,6 +3,7 @@ from .models import CarMake, CarModel
 
 django.setup()
 
+
 def initiate():
     car_make_data = [
         {"name": "NISSAN", "description": "Great cars. Japanese technology"},
