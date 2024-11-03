@@ -18,13 +18,13 @@ def login_user(request):
     password = data['password']
     user = authenticate(username=username, password=password)
     response_data = {"userName": username}
-    
+
     if user:
         login(request, user)
         response_data["status"] = "Authenticated"
     else:
         response_data["status"] = "Authentication failed"
-    
+
     return JsonResponse(response_data)
 
 
@@ -53,7 +53,7 @@ def registration(request):
         )
         login(request, user)
         return JsonResponse({"userName": username, "status": "Authenticated"})
-    
+
     return JsonResponse({"userName": username, "error": "Already Registered"})
 
 
@@ -62,11 +62,10 @@ def get_cars(request):
         initiate()
     car_models = CarModel.objects.select_related('car_make')
     cars = [
-        {"CarModel": cm.name, "CarMake": cm.car_make.name} 
+        {"CarModel": cm.name, "CarMake": cm.car_make.name}
         for cm in car_models
     ]
     return JsonResponse({"CarModels": cars})
-
 
 
 def get_dealerships(request, state="All"):
@@ -93,7 +92,7 @@ def get_dealer_reviews(request, dealer_id):
     for review in reviews:
         sentiment_response = analyze_review_sentiments(review['review'])
         review['sentiment'] = sentiment_response['sentiment']
-    
+
     return JsonResponse({
         "status": 200,
         "reviews": reviews
